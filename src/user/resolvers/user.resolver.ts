@@ -1,6 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserObject } from '../objects/user.object';
-import { UserRepository } from '../repositories/user.repository';
 import { err, fromSafePromise, ok } from 'neverthrow';
 import { DataNotFoundError } from 'src/lib/exceptions/data-not-found.exception';
 import { UserResult } from '../objects/user-result.object';
@@ -13,11 +12,23 @@ import { ChangeUserEmailInput } from '../inputs/change-user-email.input';
 import { DeleteUserCommand } from '../commands/delete-user.command';
 import { DeleteUserInput } from '../inputs/delete-user.input';
 import { DeleteUserResult } from '../objects/delete-user-result.object';
+import { ValidationFailed } from 'src/lib/exceptions/validation-failed.exception';
+import { Inject } from '@nestjs/common';
+import { UserRepositoryToken } from '../repositories/di-token';
+
+export type CreateUserResult = UserObject | ValidationFailed;
+
+export interface IUserRepositoryQuery {
+  findById(id: string): Promise<UserObject | null>;
+  findMany(): Promise<UserObject[]>;
+  findOrThrowById(id: string): Promise<UserObject>;
+}
 
 @Resolver(() => UserObject)
 export class UserResolver {
   constructor(
-    private readonly userRepository: UserRepository,
+    @Inject(UserRepositoryToken)
+    private readonly userRepository: IUserRepositoryQuery,
     private readonly createUserCommand: CreateUserCommand,
     private readonly changeUserEmailCommand: ChangeUserEmailCommand,
     private readonly deleteUserCommand: DeleteUserCommand,
@@ -49,7 +60,7 @@ export class UserResolver {
   @Mutation(() => CreateUserResult)
   async createUser(
     @Args('input', { type: () => CreateUserInput }) input: CreateUserInput,
-  ): Promise<typeof CreateUserResult> {
+  ): Promise<CreateUserResult> {
     const result = await this.createUserCommand.execute(input);
     if (result.isErr()) {
       return result.error.toGraphql();

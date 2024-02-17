@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { DeletableUser, User } from '../entities/user.entity';
+import { IUserRepositoryCreateUser } from '../commands/create-user.command';
+import { IUserRepositoryDeleteUser } from '../commands/delete-user.command';
+import { IUserRepositoryQuery } from '../resolvers/user.resolver';
 
 @Injectable()
-export class UserRepository {
+export class UserRepository
+  implements
+    IUserRepositoryCreateUser,
+    IUserRepositoryDeleteUser,
+    IUserRepositoryQuery
+{
   constructor(private readonly prisma: PrismaService) {}
 
   async findMany() {
@@ -27,7 +35,7 @@ export class UserRepository {
   }
 
   async save(user: User) {
-    await this.prisma.user.upsert({
+    return await this.prisma.user.upsert({
       where: {
         id: user.id,
       },
@@ -44,7 +52,7 @@ export class UserRepository {
   }
 
   async delete(deletableUser: DeletableUser) {
-    await this.prisma.user.delete({
+    return await this.prisma.user.delete({
       where: {
         id: deletableUser.id,
       },

@@ -1,10 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../repositories/user.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { DeletableUser, IUserIdentifier, User } from '../entities/user.entity';
 import { err, fromSafePromise, ok } from 'neverthrow';
 import { DataNotFoundError } from 'src/lib/exceptions/data-not-found.exception';
+import { UserObject } from '../objects/user.object';
+import { UserRepositoryToken } from '../repositories/di-token';
+import { IUserRepository } from '../repositories/interface';
 
 export interface IDeleteUserInput extends IUserIdentifier {}
+
+export interface IUserRepositoryDeleteUser {
+  delete(deletableUser: DeletableUser): Promise<UserObject>;
+}
 
 type Command = {
   input: IDeleteUserInput;
@@ -13,7 +19,10 @@ type Command = {
 
 @Injectable()
 export class DeleteUserCommand {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @Inject(UserRepositoryToken)
+    private readonly userRepository: IUserRepository,
+  ) {}
 
   execute(input: IDeleteUserInput) {
     return ok(input)
@@ -43,8 +52,6 @@ export class DeleteUserCommand {
   }
 
   private save(deletableUser: DeletableUser) {
-    return fromSafePromise(this.userRepository.delete(deletableUser)).map(
-      () => deletableUser,
-    );
+    return fromSafePromise(this.userRepository.delete(deletableUser));
   }
 }

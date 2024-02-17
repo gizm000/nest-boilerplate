@@ -6,8 +6,8 @@ export abstract class Entity {
   id: string;
 
   @Field(() => Date, { nullable: false })
-  createdAt: Date | null;
+  createdAt: Date;
 
   @Field(() => Date, { nullable: false })
-  updatedAt: Date | null;
+  updatedAt: Date;
 }

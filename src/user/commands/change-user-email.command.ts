@@ -4,10 +4,11 @@ import {
   IUserIdentifier,
   User,
 } from '../entities/user.entity';
-import { UserRepository } from '../repositories/user.repository';
 import { DataNotFoundError } from 'src/lib/exceptions/data-not-found.exception';
 import { ValidationFailedError } from 'src/lib/exceptions/validation-failed.exception';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { IUserRepository } from '../repositories/interface';
+import { UserRepositoryToken } from '../repositories/di-token';
 
 export interface IChangeEmailInput
   extends IChangeEmailEntity,
@@ -20,7 +21,10 @@ type Command = {
 
 @Injectable()
 export class ChangeUserEmailCommand {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @Inject(UserRepositoryToken)
+    private readonly userRepository: IUserRepository,
+  ) {}
 
   execute(input: IChangeEmailInput) {
     return ok(input)
