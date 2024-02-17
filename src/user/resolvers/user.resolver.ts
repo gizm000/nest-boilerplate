@@ -10,6 +10,9 @@ import { CreateUserResult } from '../objects/create-user-result.objec';
 import { ChangeUserEmailCommand } from '../commands/change-user-email.command';
 import { ChangeUserEmailResult } from '../objects/change-user-email-result.objec';
 import { ChangeUserEmailInput } from '../inputs/change-user-email.input';
+import { DeleteUserCommand } from '../commands/delete-user.command';
+import { DeleteUserInput } from '../inputs/delete-user.input';
+import { DeleteUserResult } from '../objects/delete-user-result.object';
 
 @Resolver(() => UserObject)
 export class UserResolver {
@@ -17,6 +20,7 @@ export class UserResolver {
     private readonly userRepository: UserRepository,
     private readonly createUserCommand: CreateUserCommand,
     private readonly changeUserEmailCommand: ChangeUserEmailCommand,
+    private readonly deleteUserCommand: DeleteUserCommand,
   ) {}
 
   @Query(() => [UserObject])
@@ -63,6 +67,18 @@ export class UserResolver {
       return result.error.toGraphql();
     } else {
       return this.userRepository.findOrThrowById(result.value.id);
+    }
+  }
+
+  @Mutation(() => DeleteUserResult)
+  async deleteUser(
+    @Args('input', { type: () => DeleteUserInput }) input: DeleteUserInput,
+  ): Promise<typeof DeleteUserResult> {
+    const result = await this.deleteUserCommand.execute(input);
+    if (result.isErr()) {
+      return result.error.toGraphql();
+    } else {
+      return result.value;
     }
   }
 }

@@ -17,6 +17,8 @@ export interface IChangeEmailEntity {
   email: string;
 }
 
+const deletableSymbol = Symbol('deletable');
+
 export class User extends UserObject {
   changeUserEmailEvent: ChangeUserEmailEvent[] = [];
 
@@ -54,6 +56,10 @@ export class User extends UserObject {
       });
   }
 
+  public delete() {
+    return ok(new DeletableUserId(this.id, deletableSymbol));
+  }
+
   private validate(user: User) {
     return ok(user).andThen(() => {
       const result = user.schema.safeParse(user);
@@ -64,4 +70,11 @@ export class User extends UserObject {
       }
     });
   }
+}
+
+export class DeletableUserId {
+  constructor(
+    readonly value: string,
+    readonly symbol: typeof deletableSymbol,
+  ) {}
 }

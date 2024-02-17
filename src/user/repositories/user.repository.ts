@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { User } from '../entities/user.entity';
+import { DeletableUserId, User } from '../entities/user.entity';
 
 @Injectable()
 export class UserRepository {
@@ -39,6 +39,14 @@ export class UserRepository {
       update: {
         email: user.email,
         name: user.name,
+      },
+    });
+  }
+
+  async delete(deletableUserId: DeletableUserId) {
+    await this.prisma.user.delete({
+      where: {
+        id: deletableUserId.value,
       },
     });
   }
