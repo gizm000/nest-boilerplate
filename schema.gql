@@ -26,3 +26,19 @@ type DataNotFound {
   success: Boolean!
   message: String!
 }
+
+type Mutation {
+  createUser(input: CreateUserInput!): CreateUserResult!
+}
+
+union CreateUserResult = Object | ValidationFailed
+
+type ValidationFailed {
+  success: Boolean!
+  message: String!
+}
+
+input CreateUserInput {
+  email: String!
+  name: String
+}
