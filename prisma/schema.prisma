@@ -11,6 +11,10 @@ model User {
   id    String  @id @default(uuid()) @map("id")
   email String  @map("email")
   name  String? @map("name")
+
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @default(now()) @updatedAt @map("updatedAt")
+
   posts Post[]
 }
 
@@ -21,4 +25,7 @@ model Post {
   published Boolean @map("published")
   author    User    @relation(fields: [authorId], references: [id])
   authorId  String  @map("authorId")
+
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @default(now()) @updatedAt @map("updatedAt")
 }
