@@ -57,7 +57,9 @@ export class User extends UserObject {
   }
 
   public delete() {
-    return ok(new DeletableUserId(this.id, deletableSymbol));
+    const deletableUser = new DeletableUser(deletableSymbol);
+    Object.assign(deletableUser, this);
+    return ok(deletableUser);
   }
 
   private validate(user: User) {
@@ -72,9 +74,8 @@ export class User extends UserObject {
   }
 }
 
-export class DeletableUserId {
-  constructor(
-    readonly value: string,
-    readonly symbol: typeof deletableSymbol,
-  ) {}
+export class DeletableUser extends User {
+  constructor(readonly symbol: typeof deletableSymbol) {
+    super();
+  }
 }

@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
-import {
-  DeletableUserId,
-  IUserIdentifier,
-  User,
-} from '../entities/user.entity';
+import { DeletableUser, IUserIdentifier, User } from '../entities/user.entity';
 import { err, fromSafePromise, ok } from 'neverthrow';
 import { DataNotFoundError } from 'src/lib/exceptions/data-not-found.exception';
 
@@ -46,9 +42,9 @@ export class DeleteUserCommand {
     return user.delete();
   }
 
-  private save(deletableUserId: DeletableUserId) {
-    return fromSafePromise(this.userRepository.delete(deletableUserId)).map(
-      () => deletableUserId.value,
+  private save(deletableUser: DeletableUser) {
+    return fromSafePromise(this.userRepository.delete(deletableUser)).map(
+      () => deletableUser,
     );
   }
 }

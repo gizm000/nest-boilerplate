@@ -30,6 +30,7 @@ type DataNotFound {
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResult!
   changeUserEmail(input: ChangeUserEmailInput!): ChangeUserEmailResult!
+  deleteUser(input: DeleteUserInput!): DeleteUserResult!
 }
 
 union CreateUserResult = UserObject | ValidationFailed
@@ -49,4 +50,10 @@ union ChangeUserEmailResult = UserObject | DataNotFound | ValidationFailed
 input ChangeUserEmailInput {
   id: ID!
   email: String!
+}
+
+union DeleteUserResult = UserObject | DataNotFound
+
+input DeleteUserInput {
+  id: ID!
 }
