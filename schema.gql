@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Object {
+type UserObject {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -16,11 +16,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Query {
-  users: [Object!]!
+  users: [UserObject!]!
   user(id: String!): UserResult!
 }
 
-union UserResult = Object | DataNotFound
+union UserResult = UserObject | DataNotFound
 
 type DataNotFound {
   success: Boolean!
@@ -29,9 +29,10 @@ type DataNotFound {
 
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserResult!
+  changeUserEmail(input: ChangeUserEmailInput!): ChangeUserEmailResult!
 }
 
-union CreateUserResult = Object | ValidationFailed
+union CreateUserResult = UserObject | ValidationFailed
 
 type ValidationFailed {
   success: Boolean!
@@ -41,4 +42,11 @@ type ValidationFailed {
 input CreateUserInput {
   email: String!
   name: String
+}
+
+union ChangeUserEmailResult = UserObject | DataNotFound | ValidationFailed
+
+input ChangeUserEmailInput {
+  id: ID!
+  email: String!
 }

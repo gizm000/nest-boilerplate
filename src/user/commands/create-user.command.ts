@@ -2,9 +2,11 @@ import { fromSafePromise, ok } from 'neverthrow';
 import { ICreateUserEntity, User } from '../entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
 import { ValidationFailedError } from 'src/lib/exceptions/validation-failed.exception';
+import { Injectable } from '@nestjs/common';
 
 export interface ICreateUserInput extends ICreateUserEntity {}
 
+@Injectable()
 export class CreateUserCommand {
   constructor(private readonly userRepository: UserRepository) {}
 
